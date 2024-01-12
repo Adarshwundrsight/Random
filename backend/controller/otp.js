@@ -14,21 +14,25 @@ export const generateotp = async (req, res) => {
 
     try {
         const code =generateUnique()
-        const otp = await OTP.findOne({code});
-
-        if (!otp) {
-            
-            const op=await OTP.create({code})
-            console.log("got otp",code);
-            res.json({ code: code});
-        }
-        else
+        while(1)
         {
-           
-            return res.status(409).json({
-                message: "Generated code already exists in the database.",
-                success: false,
-            });
+            
+            const otp = await OTP.findOne({code});
+
+            if (!otp) {
+                const op=await OTP.create({code})
+                console.log("got otp",code);
+                return res.json({ code: code});
+            }
+            else
+            {
+                code=generateUnique()
+                // return res.status(409).json({
+                //     message: "Generated code already exists in the database.",
+                //     success: false,
+                // });
+            
+            }
         }
 
         // Handle the case when the generated code already exists in the database
